@@ -2,7 +2,7 @@
 
 
 a = Analysis(
-    ['renamer.py'],
+    ['main.py'],
     pathex=[],
     binaries=[],
     datas=[('favicon.ico', '.')],
