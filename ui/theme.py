@@ -1,4 +1,5 @@
 import os
+import sys
 from PyQt5.QtGui import QIcon, QPalette, QColor, QPixmap, QFont
 from PyQt5.QtCore import QByteArray
 
@@ -38,13 +39,15 @@ S_LIST = f"""
 QListWidget {{
     background-color: {BG_CARD};
     border: 1px solid {BORDER};
-    border-radius: 5px;
-    padding: 6px;
+    border-top: none;
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
+    padding: 4px;
     outline: none;
     font-size: 14px;
 }}
 QListWidget::item {{
-    padding: 10px 14px;
+    padding: 8px 10px;
     border-radius: 4px;
     margin: 1px 2px;
     color: {TEXT};
@@ -66,6 +69,20 @@ QListWidget::drop-indicator {{
 }}
 QListWidget::disabled {{
     background-color: {BG_DEEP};
+}}
+"""
+
+S_LIST_HEADER = f"""
+QFrame#listHeader {{
+    background-color: {BG_ALT};
+    border: 1px solid {BORDER};
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+}}
+QLabel {{
+    font-size: 13px;
+    font-weight: 600;
+    color: {TEXT_SEC};
 }}
 """
 
@@ -213,6 +230,22 @@ QHeaderView::section {{
 S_HEADER = f"QLabel {{ font-size: 14px; color: {TEXT_SEC}; }}"
 S_STATUS = f"QLabel {{ font-size: 13px; color: #9C9C9C; }}"
 
+S_PROGRESS_BAR = f"""
+QProgressBar {{
+    background-color: {BG_CARD};
+    border: 1px solid {BORDER};
+    border-radius: 4px;
+    text-align: center;
+    color: {TEXT};
+    font-size: 12px;
+    height: 18px;
+}}
+QProgressBar::chunk {{
+    background-color: {ACCENT};
+    border-radius: 3px;
+}}
+"""
+
 
 def setup_palette(app):
     palette = QPalette()
@@ -235,11 +268,18 @@ def setup_palette(app):
 
 
 def make_icon():
-    ico_path = os.path.join(os.path.dirname(__file__), "..", "favicon.ico")
+    base_dir = getattr(sys, '_MEIPASS', os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+    ico_path = os.path.join(base_dir, "favicon.ico")
     if os.path.exists(ico_path):
         return QIcon(ico_path)
 
-    b64_path = os.path.join(os.path.dirname(__file__), "..", "icon_b64.txt")
+    rel_ico = os.path.join(os.path.dirname(__file__), "..", "favicon.ico")
+    if os.path.exists(rel_ico):
+        return QIcon(rel_ico)
+
+    b64_path = os.path.join(base_dir, "icon_b64.txt")
+    if not os.path.exists(b64_path):
+        b64_path = os.path.join(os.path.dirname(__file__), "..", "icon_b64.txt")
     if os.path.exists(b64_path):
         with open(b64_path, "r") as f:
             data = f.read()
